@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Maki — 16</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0b0b0d;
+    --surface: #16161a;
+    --surface-2: #1e1e23;
+    --grip: #b8f23c;
+    --spray: #d1495b;
+    --mochi: #ffb4c6;
+    --ink: #f5f0e6;
+    --muted: #8b8b93;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  .grain{
+    position: fixed; inset: 0; pointer-events: none; z-index: 999;
+    opacity: 0.05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  a, button{ font-family: inherit; }
+
+  :focus-visible{ outline: 3px solid var(--grip); outline-offset: 3px; }
+
+  section{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6vh 6vw;
+    position: relative;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(circle at 20% 20%, rgba(184,242,60,0.08), transparent 40%),
+      radial-gradient(circle at 80% 75%, rgba(209,73,91,0.10), transparent 45%),
+      var(--bg);
+    text-align: center;
+  }
+
+  .eyebrow{
+    color: var(--grip);
+    letter-spacing: 0.35em;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .big-16{
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(6rem, 28vw, 15rem);
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 3px var(--ink);
+    position: relative;
+    letter-spacing: 0.02em;
+  }
+  .big-16 span{
+    position: absolute; inset: 0;
+    color: var(--spray);
+    -webkit-text-stroke: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 38%, 0 46%);
+  }
+
+  .hero-name{
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(2.5rem, 9vw, 5rem);
+    letter-spacing: 0.05em;
+    margin: 0.5rem 0 0.25rem;
+    color: var(--ink);
+  }
+
+  .hero-alias{
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    color: var(--mochi);
+    transform: rotate(-2deg);
+    display: inline-block;
+    margin-bottom: 2rem;
+  }
+
+  .skate-wrap{
+    width: min(260px, 60vw);
+    margin: 1.5rem auto 2rem;
+    animation: float 3.5s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{ transform: translateY(0) rotate(-4deg); }
+    50%{ transform: translateY(-14px) rotate(4deg); }
+  }
+  .kickflip{
+    animation: kickflip 1.4s cubic-bezier(.4,0,.2,1) 1;
+  }
+  @keyframes kickflip{
+    0%{ transform: rotate(0) translateY(0); }
+    40%{ transform: rotate(-200deg) translateY(-60px); }
+    70%{ transform: rotate(-340deg) translateY(-20px); }
+    100%{ transform: rotate(-360deg) translateY(0); }
+  }
+
+  .countdown{
+    font-size: 0.85rem;
+    color: var(--muted);
+    border: 1px dashed var(--muted);
+    padding: 0.6rem 1.2rem;
+    border-radius: 100px;
+  }
+  .countdown b{ color: var(--grip); }
+
+  .scroll-cue{
+    position: absolute; bottom: 2.5rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    animation: bob 1.8s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(8px);} }
+
+  /* ---------- STICKERS ---------- */
+  .stickers-section{ background: var(--bg); }
+
+  .section-title{
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  .section-sub{
+    font-family: 'Caveat', cursive;
+    font-size: 1.4rem;
+    color: var(--mochi);
+    text-align: center;
+    margin-bottom: 3rem;
+    transform: rotate(-1deg);
+  }
+
+  .sticker-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    width: 100%;
+  }
+
+  .sticker{
+    background: var(--surface);
+    border: 2px solid var(--surface-2);
+    border-radius: 18px;
+    padding: 1.8rem 1.4rem;
+    text-align: center;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+  .sticker:nth-child(odd){ transform: rotate(-2deg); }
+  .sticker:nth-child(even){ transform: rotate(2deg); }
+  .sticker:hover{ transform: scale(1.05) rotate(0deg); border-color: var(--grip); }
+
+  .sticker-icon{ width: 56px; height: 56px; margin: 0 auto 1rem; display: block; }
+  .sticker h3{
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    letter-spacing: 0.03em;
+    margin: 0 0 0.5rem;
+    color: var(--grip);
+  }
+  .sticker p{
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ---------- WHEEL / VOICE ---------- */
+  .wheel-section{ background: var(--surface); }
+
+  .wheel-wrap{
+    position: relative;
+    width: min(280px, 60vw);
+    height: min(280px, 60vw);
+    margin-bottom: 2rem;
+  }
+  .wheel{
+    width: 100%; height: 100%;
+    animation: spin 6s linear infinite;
+  }
+  .wheel-wrap:hover .wheel{ animation-duration: 1.2s; }
+  @keyframes spin{ from{ transform: rotate(0);} to{ transform: rotate(360deg);} }
+
+  .note{
+    position: absolute;
+    color: var(--mochi);
+    font-size: 1.5rem;
+    animation: orbit 4s linear infinite;
+  }
+  @keyframes orbit{
+    from{ transform: rotate(0deg) translateX(140px) rotate(0deg); }
+    to{ transform: rotate(360deg) translateX(140px) rotate(-360deg); }
+  }
+
+  .wheel-caption{
+    max-width: 540px;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--ink);
+  }
+  .wheel-caption em{ color: var(--grip); font-style: normal; }
+
+  /* ---------- LETTER ---------- */
+  .letter-section{
+    background: var(--bg);
+    text-align: left;
+  }
+  .letter-card{
+    max-width: 640px;
+    background: var(--surface);
+    border-left: 4px solid var(--spray);
+    padding: 2.5rem clamp(1.5rem, 5vw, 3rem);
+    border-radius: 4px;
+  }
+  .letter-card p{
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.3rem, 3.2vw, 1.7rem);
+    line-height: 1.65;
+    color: var(--ink);
+    margin: 0 0 1.2rem;
+  }
+  .letter-card .sign{
+    text-align: right;
+    color: var(--mochi);
+  }
+  .letter-card .highlight{ color: var(--grip); }
+
+  /* ---------- CANDLE ---------- */
+  .candle-section{ background: var(--bg); }
+
+  #cake{
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #cake svg{ width: 140px; height: auto; }
+  .flame{ transform-origin: center bottom; animation: flicker 1.2s ease-in-out infinite; }
+  @keyframes flicker{ 0%,100%{ transform: scaleY(1) rotate(0deg);} 50%{ transform: scaleY(1.15) rotate(-3deg);} }
+  .flame.out{ opacity: 0; animation: none; }
+
+  .candle-hint{
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .wish{
+    margin-top: 2.5rem;
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    text-align: center;
+    color: var(--grip);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .wish.show{ opacity: 1; transform: translateY(0); }
+
+  .confetti-piece{
+    position: fixed;
+    top: -10px;
+    z-index: 998;
+    pointer-events: none;
+    border-radius: 2px;
+  }
+
+  footer{
+    padding: 3rem 6vw 4rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    background: var(--bg);
+  }
+  footer .heart{ color: var(--mochi); }
+
+  /* ---------- LOADER ---------- */
+  .loader{
+    position: fixed; inset: 0; z-index: 1000;
+    background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1.5rem;
+    transition: opacity 0.8s ease;
+    padding: 2rem;
+    text-align: center;
+  }
+  .loader.hide{ opacity: 0; pointer-events: none; }
+  .loader-text{
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.4rem, 5vw, 2.2rem);
+    color: var(--ink);
+    max-width: 380px;
+  }
+  .loader-bar{
+    width: 220px; height: 4px;
+    background: var(--surface-2);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .loader-fill{
+    height: 100%; width: 0%;
+    background: var(--grip);
+    border-radius: 100px;
+  }
+  #mainContent{ opacity: 0; transition: opacity 1s ease; }
+  #mainContent.show{ opacity: 1; }
+
+  /* ---------- PLAYER CARD ---------- */
+  .player-section{ background: var(--surface); }
+
+  .player-card{
+    width: min(320px, 85vw);
+    background: #0f0f12;
+    border-radius: 20px;
+    padding: 1.8rem 1.6rem 1.6rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    border: 1px solid var(--surface-2);
+  }
+
+  .art-wrap{
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+    background: linear-gradient(135deg, #1e1e23, #0b0b0d);
+    position: relative;
+  }
+  .art-wrap img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+  .art-placeholder{
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.6rem; color: var(--muted); font-size: 0.75rem; text-align: center; padding: 1rem;
+  }
+  .art-placeholder svg{ width: 40px; height: 40px; opacity: 0.6; }
+
+  .track-title{
+    font-family: 'Anton', sans-serif;
+    font-size: 1.25rem;
+    margin: 0 0 0.2rem;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .track-artist{ font-size: 0.8rem; color: var(--muted); margin: 0 0 1.2rem; }
+
+  .progress-row{ display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.4rem; }
+  .time{ font-size: 0.7rem; color: var(--muted); min-width: 32px; }
+  .progress-track{ flex: 1; height: 4px; background: var(--surface-2); border-radius: 100px; overflow: hidden; cursor: pointer; }
+  .progress-fill{ height: 100%; width: 0%; background: var(--grip); border-radius: 100px; }
+
+  .controls{ display: flex; align-items: center; justify-content: center; gap: 1.8rem; }
+  .controls button{
+    background: none; border: none; color: var(--ink); cursor: pointer;
+    font-size: 1.3rem; opacity: 0.85; transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .controls button:hover{ opacity: 1; transform: scale(1.1); }
+  #playBtn{
+    width: 54px; height: 54px; border-radius: 50%; background: var(--grip);
+    color: #0b0b0d; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+  }
+  #playBtn:hover{ transform: scale(1.06); }
+
+  /* ---------- GRATITUDE CARD ---------- */
+  .gratitude-section{ background: var(--bg); }
+
+  .gratitude-card{
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    width: min(420px, 88vw);
+    background: var(--surface);
+    border: 2px solid var(--surface-2);
+    border-radius: 20px;
+    padding: 2.2rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    transform: rotate(-1deg);
+    transform-style: preserve-3d;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .gratitude-card:hover{ border-color: var(--grip); transform: rotate(0deg) scale(1.02); }
+  .gratitude-card.flip{ animation: flipCard 0.44s ease; }
+  @keyframes flipCard{
+    0%{ transform: rotateX(0deg); }
+    50%{ transform: rotateX(90deg); }
+    100%{ transform: rotateX(0deg); }
+  }
+
+  .gratitude-index{
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--grip);
+  }
+  .gratitude-text{
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.4rem, 4vw, 1.9rem);
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .gratitude-hint{
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ---------- PRAYER ---------- */
+  .prayer-section{ background: var(--surface); text-align: left; }
+
+  .prayer-card{
+    max-width: 640px;
+    background: var(--surface-2);
+    border-left: 4px solid var(--mochi);
+    padding: 2.5rem clamp(1.5rem, 5vw, 3rem);
+    border-radius: 4px;
+    animation: glow 4s ease-in-out infinite;
+  }
+  @keyframes glow{
+    0%,100%{ box-shadow: 0 0 0 rgba(255,180,198,0); }
+    50%{ box-shadow: 0 0 40px rgba(255,180,198,0.08); }
+  }
+  .prayer-card p{
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.3rem, 3.2vw, 1.7rem);
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 1.1rem;
+  }
+  .prayer-card .sign{
+    text-align: right;
+    color: var(--mochi);
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<div class="loader" id="loader">
+  <p class="loader-text">something special is waiting here...</p>
+  <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+</div>
+
+<div id="mainContent">
+
+<!-- HERO -->
+<section class="hero">
+  <p class="eyebrow">October 2 · Cambodia · Sweet Sixteen</p>
+  <div class="big-16">16<span>16</span></div>
+  <h1 class="hero-name">MAKI</h1>
+  <p class="hero-alias">a.k.a Mono — the mochi-cheek one 🍡</p>
+
+  <div class="skate-wrap" id="skateWrap">
+    <svg viewBox="0 0 200 90" class="skate">
+      <rect x="30" y="35" width="140" height="14" rx="7" fill="#b8f23c"/>
+      <circle cx="55" cy="60" r="14" fill="#16161a" stroke="#f5f0e6" stroke-width="3"/>
+      <circle cx="145" cy="60" r="14" fill="#16161a" stroke="#f5f0e6" stroke-width="3"/>
+      <circle cx="55" cy="60" r="4" fill="#f5f0e6"/>
+      <circle cx="145" cy="60" r="4" fill="#f5f0e6"/>
+    </svg>
+  </div>
+
+  <p class="countdown" id="countdown">counting the days...</p>
+  <div class="scroll-cue">scroll ↓</div>
+</section>
+
+<!-- STICKERS -->
+<section class="stickers-section">
+  <h2 class="section-title">Why Maki Is Just Different</h2>
+  <p class="section-sub">stickers on the deck, nothing generic</p>
+
+  <div class="sticker-grid">
+    <div class="sticker">
+      <svg class="sticker-icon" viewBox="0 0 64 64" fill="none">
+        <rect x="8" y="26" width="48" height="8" rx="4" fill="#b8f23c"/>
+        <circle cx="18" cy="42" r="6" fill="#f5f0e6"/>
+        <circle cx="46" cy="42" r="6" fill="#f5f0e6"/>
+      </svg>
+      <h3>Skateboard</h3>
+      <p>Fall a hundred times, get back on the deck a hundred and one. That's exactly you.</p>
+    </div>
+    <div class="sticker">
+      <svg class="sticker-icon" viewBox="0 0 64 64" fill="none">
+        <circle cx="20" cy="44" r="12" stroke="#b8f23c" stroke-width="3" fill="none"/>
+        <circle cx="44" cy="44" r="12" stroke="#b8f23c" stroke-width="3" fill="none"/>
+        <path d="M20 44 L34 20 L44 44 M28 32 L40 32" stroke="#f5f0e6" stroke-width="3" fill="none"/>
+      </svg>
+      <h3>Fixie</h3>
+      <p>No brakes, no drama, straight to where you're going. Pretty much your whole vibe.</p>
+    </div>
+    <div class="sticker">
+      <svg class="sticker-icon" viewBox="0 0 64 64" fill="none">
+        <rect x="18" y="10" width="28" height="38" rx="6" fill="#1e1e23" stroke="#f5f0e6" stroke-width="2"/>
+        <path d="M24 48 L18 56 M40 48 L46 56" stroke="#f5f0e6" stroke-width="2"/>
+      </svg>
+      <h3>All-Black Fit</h3>
+      <p>Dark clothes were never about hiding — on you, they just look like a taste nobody else has.</p>
+    </div>
+    <div class="sticker">
+      <svg class="sticker-icon" viewBox="0 0 64 64" fill="none">
+        <rect x="26" y="10" width="12" height="26" rx="6" fill="#ffb4c6"/>
+        <path d="M18 30 a14 14 0 0 0 28 0" stroke="#f5f0e6" stroke-width="3" fill="none"/>
+        <line x1="32" y1="44" x2="32" y2="54" stroke="#f5f0e6" stroke-width="3"/>
+      </svg>
+      <h3>Your Voice</h3>
+      <p>Not everyone knows yet, but when you sing, it's genuinely good.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHEEL -->
+<section class="wheel-section">
+  <h2 class="section-title">Spinning Like a Record</h2>
+  <p class="section-sub">a fixie wheel, playing your song</p>
+
+  <div class="wheel-wrap">
+    <svg class="wheel" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="90" fill="none" stroke="#1e1e23" stroke-width="10"/>
+      <circle cx="100" cy="100" r="90" fill="none" stroke="#b8f23c" stroke-width="4" stroke-dasharray="6 10"/>
+      <circle cx="100" cy="100" r="55" fill="#0b0b0d" stroke="#f5f0e6" stroke-width="2"/>
+      <line x1="100" y1="10" x2="100" y2="190" stroke="#1e1e23" stroke-width="2"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="#1e1e23" stroke-width="2"/>
+      <circle cx="100" cy="100" r="10" fill="#ffb4c6"/>
+    </svg>
+    <span class="note" style="animation-delay:0s">♪</span>
+    <span class="note" style="animation-delay:-1.3s">♫</span>
+    <span class="note" style="animation-delay:-2.6s">♪</span>
+  </div>
+
+  <p class="wheel-caption">If real talent is rare, you've got two at once: <em>the guts to fall and get back up on wheels</em>, and <em>a voice that can make someone stop scrolling just to listen</em>.</p>
+</section>
+
+<!-- PLAYER -->
+<section class="player-section">
+  <h2 class="section-title">Now Playing</h2>
+  <p class="section-sub">a song for you, on repeat</p>
+
+  <div class="player-card">
+    <div class="art-wrap" id="artWrap">
+      <img id="albumArt" src="" alt="Photo of Maki">
+      <div class="art-placeholder" id="artPlaceholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="7" width="18" height="13" rx="2"/>
+          <circle cx="12" cy="13.5" r="3.2"/>
+          <path d="M8 7l1.5-2.5h5L16 7"/>
+        </svg>
+        <span>put Maki's photo here</span>
+      </div>
+    </div>
+
+    <h3 class="track-title" id="trackTitle">—</h3>
+    <p class="track-artist" id="trackArtist">Maki</p>
+
+    <div class="progress-row">
+      <span class="time" id="timeCurrent">0:00</span>
+      <div class="progress-track" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="time" id="timeTotal">0:00</span>
+    </div>
+
+    <div class="controls">
+      <button id="prevBtn" aria-label="Previous track">⏮</button>
+      <button id="playBtn" aria-label="Play">▶</button>
+      <button id="nextBtn" aria-label="Next track">⏭</button>
+    </div>
+  </div>
+</section>
+
+<!-- LETTER -->
+<section class="letter-section">
+  <div class="letter-card">
+    <p>Maki, turning 16 isn't just a number. It means you've carried things most people never even realize were heavy.</p>
+    <p>A messy home, a family that hasn't always stayed whole — none of that was your fault, and it <span class="highlight">never</span> makes you worth any less.</p>
+    <p>I just want you to know one thing: next time you're tired, sad, or let down — you don't have to carry it alone, and you don't have to hurt yourself over it. Talk to me, any time, any hour. I'll always be here to listen.</p>
+    <p>You're cool on a skateboard, cool on a fixie, cool in all-black — but you're just as cool the moment you fall and choose to get back up anyway. That's the part I admire most.</p>
+    <p class="sign">— for Maki, the mochi-cheek one, may you grow gentler with yourself too 🤍</p>
+  </div>
+</section>
+
+<!-- GRATITUDE -->
+<section class="gratitude-section">
+  <h2 class="section-title">Reasons I'm Grateful to Know You</h2>
+  <p class="section-sub">tap the card, a new one every time</p>
+
+  <button class="gratitude-card" id="gratitudeCard">
+    <span class="gratitude-index" id="gratitudeIndex">01/07</span>
+    <span class="gratitude-text" id="gratitudeText">Because you get back on the board every single time you fall — that's not a small thing.</span>
+    <span class="gratitude-hint">tap for the next reason →</span>
+  </button>
+</section>
+
+<!-- PRAYER -->
+<section class="prayer-section">
+  <h2 class="section-title">A Little Prayer for You</h2>
+  <div class="prayer-card">
+    <p>May you always be watched over, especially in the moments you feel most alone.</p>
+    <p>May there always be a hand reaching out before the world feels heavy enough to make you want to hurt yourself again.</p>
+    <p>May the wounds people can see, and the ones only you know about, heal slowly, and never again be the only way you know how to feel relief.</p>
+    <p>May you be given a long life, many stages to sing on, many roads to ride, and plenty of time to just be yourself without having to explain it to anyone.</p>
+    <p>And if you ever read this again someday, I hope you remember one thing: you are never alone, and you are worth so much more than you think.</p>
+    <p class="sign">Amen. 🤍</p>
+  </div>
+</section>
+
+<!-- CANDLE -->
+<section class="candle-section">
+  <h2 class="section-title">Make a Wish</h2>
+  <button id="cake" aria-label="Blow the candle to make a wish">
+    <svg viewBox="0 0 140 130">
+      <g class="flame" id="flame">
+        <ellipse cx="70" cy="14" rx="6" ry="10" fill="#ffb84d"/>
+        <ellipse cx="70" cy="17" rx="3" ry="5" fill="#fff2c2"/>
+      </g>
+      <rect x="66" y="24" width="8" height="16" fill="#e8d9b0"/>
+      <path d="M20 100 Q20 60 40 60 L100 60 Q120 60 120 100 Z" fill="#5b3a29"/>
+      <rect x="20" y="95" width="100" height="20" rx="4" fill="#3a2a20"/>
+      <ellipse cx="70" cy="60" rx="50" ry="10" fill="#7a4a34"/>
+      <text x="70" y="65" text-anchor="middle" font-family="Caveat, cursive" font-size="14" fill="#f5f0e6">16</text>
+    </svg>
+  </button>
+  <p class="candle-hint" id="candleHint">tap the candle to blow it out</p>
+  <p class="wish" id="wishText">Happy 16th birthday, Maki 🍡🖤</p>
+</section>
+
+<footer>
+  <p>made with a little code and a lot of care <span class="heart">♥</span></p>
+</footer>
+
+</div>
+
+<script>
+  // countdown to next Oct 2
+  function updateCountdown(){
+    const now = new Date();
+    let year = now.getFullYear();
+    let target = new Date(year, 9, 2); // Oct is month 9
+    if (now > target) target = new Date(year + 1, 9, 2);
+    const diff = target - now;
+    const days = Math.ceil(diff / (1000*60*60*24));
+    const el = document.getElementById('countdown');
+    if (days <= 0) {
+      el.innerHTML = "it's Maki's birthday today! <b>turning 16</b> 🎉";
+    } else {
+      el.innerHTML = "<b>" + days + " days</b> until October 2";
+    }
+  }
+  updateCountdown();
+
+  // skateboard kickflip trigger
+  const skateWrap = document.getElementById('skateWrap');
+  const skate = skateWrap.querySelector('.skate');
+  skateWrap.addEventListener('click', () => {
+    skate.classList.remove('kickflip');
+    void skate.offsetWidth;
+    skate.classList.add('kickflip');
+  });
+
+  // candle blow
+  const cake = document.getElementById('cake');
+  const flame = document.getElementById('flame');
+  const wish = document.getElementById('wishText');
+  const hint = document.getElementById('candleHint');
+  let blown = false;
+
+  function confettiBurst(){
+    const colors = ['#b8f23c', '#d1495b', '#ffb4c6', '#f5f0e6'];
+    for (let i = 0; i < 60; i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const size = 6 + Math.random() * 6;
+      piece.style.width = size + 'px';
+      piece.style.height = (size * 0.4) + 'px';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.transform = 'rotate(' + (Math.random()*360) + 'deg)';
+      document.body.appendChild(piece);
+      const duration = 2500 + Math.random() * 2000;
+      const drift = (Math.random() - 0.5) * 200;
+      piece.animate([
+        { transform: piece.style.transform + ' translate(0,0)', opacity: 1 },
+        { transform: piece.style.transform + ` translate(${drift}px, 100vh)`, opacity: 0.9 }
+      ], { duration: duration, easing: 'ease-in' });
+      setTimeout(() => piece.remove(), duration);
+    }
+  }
+
+  cake.addEventListener('click', () => {
+    if (blown) return;
+    blown = true;
+    flame.classList.add('out');
+    hint.textContent = 'wish sent 🤍';
+    wish.classList.add('show');
+    confettiBurst();
+  });
+
+  // fake loading screen
+  window.addEventListener('load', () => {
+    const fill = document.getElementById('loaderFill');
+    const loader = document.getElementById('loader');
+    const main = document.getElementById('mainContent');
+    requestAnimationFrame(() => {
+      fill.style.transition = 'width 2.2s linear';
+      fill.style.width = '100%';
+    });
+    setTimeout(() => {
+      loader.classList.add('hide');
+      main.classList.add('show');
+    }, 2300);
+    setTimeout(() => { loader.remove(); }, 3200);
+  });
+
+  // album art placeholder handling — replace the src value on img#albumArt with Maki's photo
+  const albumArt = document.getElementById('albumArt');
+  const artPlaceholder = document.getElementById('artPlaceholder');
+  function refreshArt(){
+    const hasSrc = albumArt.getAttribute('src') && albumArt.getAttribute('src').trim() !== '';
+    albumArt.style.display = hasSrc ? 'block' : 'none';
+    artPlaceholder.style.display = hasSrc ? 'none' : 'flex';
+  }
+  albumArt.addEventListener('load', refreshArt);
+  albumArt.addEventListener('error', () => { albumArt.style.display = 'none'; artPlaceholder.style.display = 'flex'; });
+  refreshArt();
+
+  // now-playing card
+  const tracks = [
+    { title: "Maki's Favorite", artist: "Maki", duration: 200 },
+    { title: "Late Night Vocals", artist: "Maki", duration: 185 },
+    { title: "For Myself", artist: "Maki", duration: 210 }
+  ];
+  let current = 0;
+  let elapsed = 0;
+  let playing = false;
+  let playerInterval = null;
+
+  const trackTitleEl = document.getElementById('trackTitle');
+  const trackArtistEl = document.getElementById('trackArtist');
+  const timeCurrentEl = document.getElementById('timeCurrent');
+  const timeTotalEl = document.getElementById('timeTotal');
+  const progressFillEl = document.getElementById('progressFill');
+  const progressTrackEl = document.getElementById('progressTrack');
+  const playBtn2 = document.getElementById('playBtn');
+  const prevBtn2 = document.getElementById('prevBtn');
+  const nextBtn2 = document.getElementById('nextBtn');
+
+  function formatTime(s){
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60).toString().padStart(2, '0');
+    return m + ':' + sec;
+  }
+
+  function renderPlayer(){
+    const track = tracks[current];
+    trackTitleEl.textContent = track.title;
+    trackArtistEl.textContent = track.artist;
+    timeCurrentEl.textContent = formatTime(elapsed);
+    timeTotalEl.textContent = formatTime(track.duration);
+    progressFillEl.style.width = (elapsed / track.duration * 100) + '%';
+  }
+
+  function tick(){
+    const track = tracks[current];
+    elapsed += 0.25;
+    if (elapsed >= track.duration){
+      elapsed = track.duration;
+      renderPlayer();
+      pausePlayer();
+      return;
+    }
+    renderPlayer();
+  }
+
+  function playPlayer(){
+    playing = true;
+    playBtn2.textContent = '⏸';
+    playerInterval = setInterval(tick, 250);
+  }
+  function pausePlayer(){
+    playing = false;
+    playBtn2.textContent = '▶';
+    clearInterval(playerInterval);
+  }
+  function loadTrack(i){
+    current = (i + tracks.length) % tracks.length;
+    elapsed = 0;
+    renderPlayer();
+  }
+
+  playBtn2.addEventListener('click', () => { playing ? pausePlayer() : playPlayer(); });
+  nextBtn2.addEventListener('click', () => {
+    const wasPlaying = playing;
+    pausePlayer();
+    loadTrack(current + 1);
+    if (wasPlaying) playPlayer();
+  });
+  prevBtn2.addEventListener('click', () => {
+    const wasPlaying = playing;
+    pausePlayer();
+    loadTrack(current - 1);
+    if (wasPlaying) playPlayer();
+  });
+  progressTrackEl.addEventListener('click', (e) => {
+    const rect = progressTrackEl.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    elapsed = Math.max(0, Math.min(1, pct)) * tracks[current].duration;
+    renderPlayer();
+  });
+
+  renderPlayer();
+
+  // gratitude card
+  const gratitudeReasons = [
+    "Because you get back on the board every single time you fall — that's not a small thing.",
+    "Because the way you ride fixie taught me something about going straight without the drama.",
+    "Because your all-black style is courage, not a way to hide.",
+    "Because your singing voice can make a whole room feel warmer.",
+    "Because even with a messy home, you still chose to be a good person.",
+    "Because you still choose to talk, instead of holding it all in alone.",
+    "Because you exist, and that alone makes my days better."
+  ];
+  let gratitudeIdx = 0;
+  const gratitudeCard = document.getElementById('gratitudeCard');
+  const gratitudeIndexEl = document.getElementById('gratitudeIndex');
+  const gratitudeTextEl = document.getElementById('gratitudeText');
+
+  function showGratitude(i){
+    const total = gratitudeReasons.length;
+    gratitudeIndexEl.textContent = String(i + 1).padStart(2, '0') + '/' + String(total).padStart(2, '0');
+    gratitudeTextEl.textContent = gratitudeReasons[i];
+  }
+
+  gratitudeCard.addEventListener('click', () => {
+    gratitudeCard.classList.remove('flip');
+    void gratitudeCard.offsetWidth;
+    gratitudeCard.classList.add('flip');
+    setTimeout(() => {
+      gratitudeIdx = (gratitudeIdx + 1) % gratitudeReasons.length;
+      showGratitude(gratitudeIdx);
+    }, 220);
+  });
+</script>
+
+</body>
+</html>
