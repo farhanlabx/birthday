@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>For Mono</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,300;1,500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============ Variabel & dasar ============ */
+    :root {
+      --ink: #f4f3ef;
+      --dim: #8d8c88;
+      --line: #2a2a2a;
+      --glow: #ffd9a3;
+      color-scheme: dark;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+    * { box-sizing: border-box; margin: 0; }
+
+    body {
+      background: #000;
+      color: var(--ink);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 20px;
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #fx {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ============ Animasi ============ */
+    @keyframes in   { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    @keyframes bob  { 50% { transform: translateY(-9px); } }
+    @keyframes sh   { 20%, 60% { transform: translateX(-9px); } 40%, 80% { transform: translateX(9px); } }
+    @keyframes fk   { to { transform: scale(.93, 1.07) rotate(2deg); } }
+
+    /* ============ Layar ============ */
+    .scr {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 22px;
+      text-align: center;
+    }
+
+    .scr.on {
+      display: flex;
+      animation: in 1.4s both;
+    }
+
+    .view {
+      justify-content: flex-start;
+      padding-top: 80px;
+    }
+
+    /* ============ Tipografi ============ */
+    .hand {
+      font-family: Caveat, "Segoe Script", cursive;
+      font-weight: 500;
+    }
+
+    h1 {
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(44px, 12vw, 92px);
+      line-height: 1.02;
+      letter-spacing: -.01em;
+    }
+
+    .h2 { font-size: clamp(32px, 8vw, 54px); }
+
+    p.s {
+      color: var(--dim);
+      max-width: 30em;
+      margin-top: 18px;
+    }
+
+    /* ============ Input, tombol, error ============ */
+    input {
+      background: none;
+      border: 0;
+      border-bottom: 1px solid var(--dim);
+      color: var(--ink);
+      font: inherit;
+      font-size: 30px;
+      letter-spacing: .35em;
+      text-align: center;
+      text-transform: uppercase;
+      width: min(300px, 80vw);
+      padding: 8px 0;
+      outline: 0;
+      margin-top: 34px;
+    }
+
+    input:focus { border-color: var(--ink); }
+
+    .btn {
+      background: none;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      font: inherit;
+      padding: 10px 30px;
+      border-radius: 99px;
+      cursor: pointer;
+      margin-top: 28px;
+      transition: .3s;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: var(--ink);
+      color: #000;
+      outline: 0;
+    }
+
+    .err {
+      color: #c9a7a7;
+      min-height: 1.6em;
+      margin-top: 14px;
+      font-size: 17px;
+    }
+
+    .shake { animation: sh .45s; }
+
+    /* ============ Intro ============ */
+    .ch {
+      display: inline-block;
+      opacity: 0;
+      animation: rise 1s both;
+    }
+
+    .age {
+      font-size: 30px;
+      color: var(--dim);
+      margin-top: 14px;
+    }
+
+    .age b {
+      color: var(--ink);
+      font-weight: 500;
+      font-size: 44px;
+    }
+
+    /* ============ Menu ============ */
+    .ic {
+      width: 36px;
+      height: 36px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(22px, 6vw, 52px) clamp(26px, 8vw, 90px);
+      margin-top: 42px;
+    }
+
+    .orb {
+      background: none;
+      border: 0;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      animation: bob 5s ease-in-out infinite;
+    }
+
+    .orb:nth-child(2) { animation-delay: -1.3s; }
+    .orb:nth-child(3) { animation-delay: -2.6s; }
+    .orb:nth-child(4) { animation-delay: -3.4s; }
+
+    .orb i {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      transition: .45s;
+      background: radial-gradient(circle at 35% 30%, #1c1c1c, #000 70%);
+    }
+
+    .orb:hover i,
+    .orb:focus-visible i {
+      border-color: var(--ink);
+      transform: scale(1.08);
+      box-shadow: 0 0 38px #ffffff1c;
+    }
+
+    .orb.done i { border-color: var(--dim); }
+
+    .orb span {
+      font-size: 26px;
+      color: var(--dim);
+    }
+
+    .orb:hover span { color: var(--ink); }
+
+    .fin {
+      margin-top: 46px;
+      display: none;
+    }
+
+    .fin.on {
+      display: block;
+      animation: in 3s both;
+    }
+
+    /* ============ Tombol kembali ============ */
+    .back {
+      position: fixed;
+      top: calc(14px + env(safe-area-inset-top, 0px));
+      left: 16px;
+      z-index: 5;
+      background: none;
+      border: 0;
+      color: var(--dim);
+      font: inherit;
+      font-size: 19px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .back.on { display: block; }
+    .back:hover { color: var(--ink); }
+
+    /* ============ Foto polaroid ============ */
+    .pol {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      max-width: 760px;
+      width: 100%;
+      margin: 34px auto;
+      text-align: left;
+      animation: rise 1.2s both;
+    }
+
+    .pol:nth-child(2) { animation-delay: .5s; }
+    .pol:nth-child(3) { animation-delay: 1s; }
+
+    .pol:nth-child(even) {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+
+    .ph {
+      flex: 0 0 min(46%, 290px);
+      aspect-ratio: 3 / 4;
+      background: #0d0d0d;
+      border: 1px solid var(--line);
+      padding: 9px 9px 34px;
+      transform: rotate(-2.5deg);
+      box-shadow: 0 20px 50px #000;
+    }
+
+    .pol:nth-child(even) .ph { transform: rotate(2deg); }
+
+    .ph .in {
+      width: 100%;
+      height: 100%;
+      border: 1px dashed #333;
+      display: grid;
+      place-items: center;
+      color: var(--dim);
+      font-size: 17px;
+      cursor: pointer;
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    .ph img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(1) contrast(1.05);
+      transition: filter .8s;
+    }
+
+    .ph:hover img { filter: none; }
+
+    .pol p {
+      font-size: clamp(21px, 5vw, 28px);
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.35;
+    }
+
+    /* ============ Surat ============ */
+    .env {
+      background: none;
+      border: 0;
+      color: var(--ink);
+      cursor: pointer;
+      transition: .5s;
+      filter: drop-shadow(0 0 30px #ffffff22);
+    }
+
+    .env .ic {
+      width: 110px;
+      height: 110px;
+      stroke-width: .7;
+    }
+
+    .env:hover { transform: scale(1.08) rotate(-3deg); }
+
+    .letter {
+      max-width: 540px;
+      text-align: left;
+      font-size: 22px;
+      display: none;
+    }
+
+    .letter.on { display: block; }
+    .letter p { margin-bottom: 16px; }
+
+    .letter .hand {
+      font-size: 32px;
+      text-align: right;
+    }
+
+    /* ============ Kue & lilin ============ */
+    .cake {
+      position: relative;
+      width: 230px;
+      margin: 90px auto 0;
+    }
+
+    .t1,
+    .t2 {
+      margin: 0 auto;
+      border: 1px solid var(--ink);
+      background: #0b0b0b;
+    }
+
+    .t1 {
+      width: 130px;
+      height: 46px;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 0;
+    }
+
+    .t2 {
+      width: 230px;
+      height: 62px;
+      border-radius: 6px;
+    }
+
+    .cn {
+      position: absolute;
+      left: 50%;
+      top: -56px;
+      width: 12px;
+      height: 56px;
+      margin-left: -6px;
+      background: var(--ink);
+      border-radius: 3px;
+      display: grid;
+      place-items: center;
+      color: #000;
+      font-size: 11px;
+    }
+
+    .fl {
+      position: absolute;
+      left: 50%;
+      top: -96px;
+      margin-left: -11px;
+      width: 22px;
+      height: 38px;
+      border-radius: 50% / 65% 65% 35% 35%;
+      background: radial-gradient(circle at 50% 75%, #fff, var(--glow) 55%, #ff9a4a);
+      box-shadow: 0 0 50px 16px #ffb55a55;
+      animation: fk .18s infinite alternate;
+      transform-origin: 50% 100%;
+      transition: .6s;
+    }
+
+    .out .fl {
+      opacity: 0;
+      transform: translateY(-30px) scale(.2);
+      box-shadow: none;
+    }
+
+    /* ============ Hadiah ============ */
+    .gift {
+      position: relative;
+      width: 150px;
+      height: 140px;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      animation: bob 3s ease-in-out infinite;
+      margin-top: 18px;
+    }
+
+    .gift .bx,
+    .gift .lid {
+      position: absolute;
+      border: 1px solid var(--ink);
+      background: #0b0b0b;
+    }
+
+    .gift .bx {
+      bottom: 0;
+      left: 10px;
+      right: 10px;
+      height: 90px;
+    }
+
+    .gift .lid {
+      top: 14px;
+      left: 0;
+      right: 0;
+      height: 38px;
+      background: #121212;
+      z-index: 2;
+      transition: 1s cubic-bezier(.3, 1.6, .5, 1);
+    }
+
+    .gift .bx:after,
+    .gift .lid:after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      margin-left: -8px;
+      width: 16px;
+      top: 0;
+      bottom: 0;
+      background: var(--ink);
+      opacity: .85;
+    }
+
+    .gift.open { animation: none; }
+
+    .gift.open .lid {
+      transform: translate(46px, -74px) rotate(24deg);
+      opacity: 0;
+    }
+
+    .wish {
+      display: none;
+      width: min(430px, 100%);
+    }
+
+    .wish.on {
+      display: block;
+      animation: rise 1s both;
+    }
+
+    textarea {
+      width: 100%;
+      height: 110px;
+      background: #0a0a0a;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font: inherit;
+      font-size: 22px;
+      padding: 12px;
+      border-radius: 10px;
+      resize: none;
+      margin-top: 18px;
+      outline: 0;
+    }
+
+    textarea:focus { border-color: var(--ink); }
+
+    /* ============ Responsif & aksesibilitas ============ */
+    @media (max-width: 560px) {
+      .pol,
+      .pol:nth-child(even) {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .ph {
+        flex-basis: auto;
+        width: min(78vw, 300px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Ikon SVG -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-photo" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="16" rx="2"/>
+      <circle cx="9" cy="10" r="2"/>
+      <path d="M3 17l5-4 4 3 3-2 6 4"/>
+    </symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24">
+      <rect x="3" y="5" width="18" height="14" rx="2"/>
+      <path d="M3 7l9 6 9-6"/>
+    </symbol>
+    <symbol id="i-candle" viewBox="0 0 24 24">
+      <path d="M12 2c2 2 2 3.5 0 5-2-1.5-2-3 0-5z"/>
+      <rect x="10" y="9" width="4" height="10"/>
+      <path d="M6 21h12"/>
+    </symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24">
+      <rect x="3" y="9" width="18" height="11" rx="1"/>
+      <path d="M12 9v11M3 13h18M12 9C8 9 8 4 11 4c2 0 1 5 1 5zm0 0c4 0 4-5 1-5-2 0-1 5-1 5z"/>
+    </symbol>
+  </svg>
+
+  <canvas id="fx"></canvas>
+  <button class="back" id="back">&larr; back</button>
+
+  <!-- ============ Layar 1: Gerbang password ============ -->
+  <section class="scr on" id="gate">
+    <p class="hand" style="font-size:30px;color:var(--dim)">hey, Mono.</p>
+    <h1 style="font-size:clamp(34px,9vw,60px);margin-top:6px">Something's waiting<br>for you in here.</h1>
+    <p class="s">Type the code I gave you.</p>
+    <input id="code" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Code">
+    <div class="err" id="err"></div>
+    <button class="btn" id="go">Open</button>
+  </section>
+
+  <!-- ============ Layar 2: Intro ============ -->
+  <section class="scr" id="intro">
+    <p class="hand" style="font-size:28px;color:var(--dim)">2 October, 2010</p>
+    <h1 id="ttl" aria-label="Happy birthday, Mono."></h1>
+    <p class="hand age">you're <b id="age">0</b> now</p>
+    <p class="s">May your birthday be as wonderful as you are. Happy Birthday!</p>
+    <button class="btn" id="next">Let's go</button>
+  </section>
+
+  <!-- ============ Layar 3: Menu ============ -->
+  <section class="scr" id="menu">
+    <h1 style="font-size:clamp(34px,9vw,58px)">Choose the Surprise</h1>
+    <div class="grid">
+      <button class="orb" data-v="v1"><i><svg class="ic"><use href="#i-photo"/></svg></i><span class="hand">about you</span></button>
+      <button class="orb" data-v="v2"><i><svg class="ic"><use href="#i-mail"/></svg></i><span class="hand">a letter</span></button>
+      <button class="orb" data-v="v3"><i><svg class="ic"><use href="#i-candle"/></svg></i><span class="hand">make a wish</span></button>
+      <button class="orb" data-v="v4"><i><svg class="ic"><use href="#i-gift"/></svg></i><span class="hand">your gift</span></button>
+    </div>
+    <div class="fin" id="fin">
+      <p class="hand" style="font-size:30px">That is all of it. One last thing I want you to remember, you matter to me, and not only on birthdays</p>
+    </div>
+  </section>
+
+  <!-- ============ Surprise 1: Foto ============ -->
+  <section class="scr view" id="v1">
+    <h1 class="h2">This is how<br>I see you.</h1>
+    <div id="pols" style="width:100%"></div>
+  </section>
+
+  <!-- ============ Surprise 2: Surat ============ -->
+  <section class="scr view" id="v2" style="justify-content:center">
+    <button class="env" id="env" aria-label="Open the letter"><svg class="ic"><use href="#i-mail"/></svg></button>
+    <p class="hand" id="envh" style="color:var(--dim);font-size:26px">tap to open</p>
+    <div class="letter" id="letter">
+      <p>Mono,</p>
+<p>Yayyy, my kid is finally sixteen. I'm so, so proud of you.</p>
+<p>You've walked through so many heavy days, the kind nobody clapped for, the kind you never told anyone about. And you're still here, still soft, still kind. That's not a small thing. That's what real strength looks like.</p>
+<p>This year, I hope you grow even stronger. But you're allowed to cry, you know. Crying doesn't mean you're weak, and being strong doesn't mean you have to hold everything in. Some days the bravest thing you can do is let it out and rest. You never have to carry it all alone.</p>
+<p>I hope life keeps sending you kind people. I hope your days are full of warm mornings, loud laughter, and quiet moments where your heart finally feels light.</p>
+<p>Thank you for being with me all this time. Thank you for showing me what love feels like. Thank you for making me laugh on the days I thought I couldn't, and for showing up every time I needed someone. You probably don't realize it, but you were someone's safe place. You were mine.</p>
+<p>I hope we get to stay in each other's lives for a long, long time. But if one day I'm no longer by your side, please don't hold on to me. Go live fully, laugh freely, and be happy, even without me. Because all I ever wanted was for you to be okay.</p>
+<p>I'll be honest with you. I fell for you the moment we met. When I found out you had someone, I chose to respect that. I stayed quiet, I waited, and I hoped that maybe one day it would be me. But somewhere along the way, my heart changed. I don't need to be your boyfriend or your husband. I just want to watch you be happy, because your happiness became my happiness.</p>
+<p>And if love is wanting the best for someone even when it isn't you, then I think I loved you in the quietest, most honest way I knew how.</p>
+<p>So here's my wish for you, may every door you open lead somewhere beautiful, and may you always, always feel how much you're loved. You mean more to me than I will ever know how to say.</p>
+<p>Happy sixteenth, Mono. Keep shining, even on the days you don't feel like it. The world is better with you in it.</p>
+<p class="hand">happy birthday. from me.</p>
+    </div>
+  </section>
+
+  <!-- ============ Surprise 3: Make a wish ============ -->
+  <section class="scr view" id="v3" style="justify-content:center">
+    <p class="s" style="margin:0">Close your eyes for a second and think of the one thing you want most.</p>
+    <div class="cake" id="cake">
+      <div class="fl"></div>
+      <div class="cn">16</div>
+      <div class="t1"></div>
+      <div class="t2"></div>
+    </div>
+    <button class="btn" id="blow">Blow out the candle</button>
+    <p class="hand" id="wishd" style="font-size:30px;margin-top:22px;display:none">Whatever you wished for, I hope it comes true.</p>
+  </section>
+
+  <!-- ============ Surprise 4: Hadiah ============ -->
+  <section class="scr view" id="v4" style="justify-content:center">
+    <h1 class="h2">Your gift.</h1>
+    <p class="s">Pick anything. Seriously, anything. I'll do my best to make it happen.</p>
+    <button class="gift" id="gift" aria-label="Open the box"><div class="lid"></div><div class="bx"></div></button>
+    <p class="hand" id="gh" style="color:var(--dim);font-size:26px">tap the box</p>
+    <div class="wish" id="wbox">
+      <textarea id="wt" maxlength="200" placeholder="I want..."></textarea>
+      <button class="btn" id="ws">Send my wish</button>
+      <p class="s" id="wn" style="margin-top:12px;font-size:17px">This opens WhatsApp with your message ready. Just hit send.</p>
+    </div>
+    <p class="hand" id="wd" style="display:none;font-size:30px;margin-top:16px">Got it. Hit send in WhatsApp and it'll reach me.</p>
+  </section>
+
+  <script>
+  (function () {
+
+    /* =====================================================================
+       PENGATURAN
+       ===================================================================== */
+
+    // Nomor WhatsApp untuk menerima permintaan hadiah (format: 62812xxxxxxx)
+    var WA = "";
+
+    // Hash kode rahasia (jangan diubah kecuali ganti password)
+    var HASH = "5b5d51fc9ac12339484289183c034250d9a75524fda0fcf12fced31e74f00e2a";
+
+    // Foto: isi "src" dengan nama file lokal, link, atau base64
+   var PHOTOS = [
+      { src: "photo1.jpeg", cap: "You hid your face, but I could still tell you were smiling. That shy side of you is my favorite kind of cute." },
+      { src: "photo2.jpeg", cap: "Sharp on the outside, soft on the inside. I love that you wear both so well." },
+      { src: "photo3.jpeg", cap: "No filter, messy hair, glasses on. This is the you I find most beautiful because it is real." },
+      { src: "photo4.jpeg", cap: "That small, shy smile is the one that gets me every time. Please keep it." },
+      { src: "photo5.jpeg", cap: "Serious or silly, I love every version of you. You make ordinary days feel lighter." },
+      { src: "photo6.jpeg", cap: "White tee, wide pants, and so much confidence. Your style really stands out." },
+      { src: "photo7.jpeg", cap: "So peaceful here with your glasses on and that soft look. You look beautiful." }
+    ];
+
+    /* ---------------------------------------------------------------------
+       LAGU OTOMATIS (diputar setelah password benar)
+       ---------------------------------------------------------------------
+       >>> TARUH FILE / LINK LAGU DI SINI (isi bagian "src" di bawah) <<<
+
+       Pilihan 1 - File lokal:
+         Taruh file mp3 di folder yang SAMA dengan file HTML ini,
+         lalu tulis namanya, contoh:  src: "lagu.mp3"
+
+       Pilihan 2 - Link langsung ke file audio (harus berakhiran .mp3 / .m4a / .ogg):
+         contoh:  src: "https://situsanda.com/lagu.mp3"
+
+       Catatan: link Spotify / YouTube TIDAK bisa dipakai di sini,
+       karena itu bukan link file audio langsung.
+       --------------------------------------------------------------------- */
+    var MUSIC = {
+      src: "until-i-found-you.mp3",   // <-- GANTI DI SINI
+      volume: 0.7,       // 0 (hening) sampai 1 (maksimal)
+      loop: true         // true = diulang terus, false = sekali putar
+    };
+
+
+    /* =====================================================================
+       UTILITAS
+       ===================================================================== */
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    function show(id) {
+      document.querySelectorAll(".scr").forEach(function (s) {
+        s.classList.remove("on");
+      });
+      $(id).classList.add("on");
+      window.scrollTo(0, 0);
+      $("back").classList.toggle("on", /^v/.test(id));
+    }
+
+
+    /* =====================================================================
+       MUSIK LATAR
+       ===================================================================== */
+
+    var bgm = new Audio();
+    bgm.src = MUSIC.src;
+    bgm.loop = MUSIC.loop;
+    bgm.volume = MUSIC.volume;
+    bgm.preload = "auto";
+
+    function startMusic() {
+      var attempt = bgm.play();
+      if (attempt && attempt.catch) {
+        attempt.catch(function () {
+          // Jika browser memblokir autoplay, putar saat sentuhan/klik berikutnya
+          var resume = function () {
+            bgm.play().catch(function () {});
+            document.removeEventListener("pointerdown", resume);
+            document.removeEventListener("keydown", resume);
+          };
+          document.addEventListener("pointerdown", resume);
+          document.addEventListener("keydown", resume);
+        });
+      }
+    }
+
+
+    /* =====================================================================
+       EFEK PARTIKEL (latar bintang & percikan)
+       ===================================================================== */
+
+    var cv = $("fx");
+    var cx = cv.getContext("2d");
+    var P = [];
+    var W, H;
+
+    function resize() {
+      W = cv.width = innerWidth;
+      H = cv.height = innerHeight;
+    }
+    resize();
+    addEventListener("resize", resize);
+
+    // Partikel ambient (melayang pelan)
+    for (var i = 0; i < 70; i++) {
+      P.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - .5) * .12,
+        vy: -.05 - Math.random() * .15,
+        r: Math.random() * 1.4 + .3,
+        a: Math.random() * .6 + .1,
+        t: Math.random() * 6,
+        amb: 1
+      });
+    }
+
+    // Ledakan percikan
+    function burst(x, y) {
+      for (var i = 0; i < 46; i++) {
+        var a = Math.random() * 6.28;
+        var s = 1 + Math.random() * 4;
+        P.push({
+          x: x,
+          y: y,
+          vx: Math.cos(a) * s,
+          vy: Math.sin(a) * s - 1.5,
+          r: Math.random() * 2 + 1,
+          g: .05,
+          life: 1
+        });
+      }
+    }
+
+    // Jejak percikan mengikuti kursor / jari
+    document.addEventListener("pointermove", function (e) {
+      if (Math.random() < .4) {
+        P.push({
+          x: e.clientX,
+          y: e.clientY,
+          vx: (Math.random() - .5) * .8,
+          vy: Math.random() * .6,
+          r: 1.3,
+          life: .6
+        });
+      }
+    });
+
+    (function loop() {
+      cx.clearRect(0, 0, W, H);
+
+      for (var i = P.length - 1; i >= 0; i--) {
+        var p = P[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.g) p.vy += p.g;
+
+        if (p.amb) {
+          p.t += .02;
+          if (p.y < -5) {
+            p.y = H + 5;
+            p.x = Math.random() * W;
+          }
+          cx.globalAlpha = p.a * (.6 + .4 * Math.sin(p.t));
+        } else {
+          p.life -= .012;
+          if (p.life <= 0) {
+            P.splice(i, 1);
+            continue;
+          }
+          cx.globalAlpha = p.life;
+        }
+
+        cx.fillStyle = p.amb ? "#fff" : "#ffe3b3";
+        cx.beginPath();
+        cx.arc(p.x, p.y, p.r, 0, 6.28);
+        cx.fill();
+      }
+
+      requestAnimationFrame(loop);
+    })();
+
+
+    /* =====================================================================
+       GERBANG PASSWORD
+       ===================================================================== */
+
+    async function sha(s) {
+      var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+      return Array.from(new Uint8Array(buf)).map(function (x) {
+        return x.toString(16).padStart(2, "0");
+      }).join("");
+    }
+
+    async function tryCode() {
+      var v = $("code").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+      var ok = false;
+
+      try {
+        ok = (await sha("mono16:" + v)) === HASH;
+      } catch (e) {}
+
+      if (ok) {
+        $("err").textContent = "";
+        show("intro");
+        countAge();
+        startMusic();   // musik otomatis diputar setelah password benar
+      } else {
+        $("err").textContent = "That's not it. Check the letters and numbers again.";
+        var c = $("code");
+        c.classList.remove("shake");
+        void c.offsetWidth;
+        c.classList.add("shake");
+      }
+    }
+
+    $("go").onclick = tryCode;
+    $("code").onkeydown = function (e) {
+      if (e.key === "Enter") tryCode();
+    };
+    $("next").onclick = function () { show("menu"); };
+
+
+    /* =====================================================================
+       INTRO: judul huruf-per-huruf & hitung umur
+       ===================================================================== */
+
+    var T = ["Happy birthday,", "Mono."];
+    var n = 0;
+
+    T.forEach(function (line, j) {
+      if (j) $("ttl").appendChild(document.createElement("br"));
+
+      line.split("").forEach(function (c) {
+        var e = document.createElement("span");
+        e.className = "ch";
+        e.textContent = c === " " ? "\u00a0" : c;
+        e.style.animationDelay = (n++ * .07 + .3) + "s";
+        $("ttl").appendChild(e);
+      });
+    });
+
+    function countAge() {
+      var a = 0;
+      var t = setInterval(function () {
+        $("age").textContent = ++a;
+        if (a >= 16) clearInterval(t);
+      }, 130);
+    }
+
+
+    /* =====================================================================
+       MENU & NAVIGASI
+       ===================================================================== */
+
+    var seen = {};
+
+    document.querySelectorAll(".orb").forEach(function (b) {
+      b.onclick = function () {
+        seen[b.dataset.v] = 1;
+        b.classList.add("done");
+        show(b.dataset.v);
+      };
+    });
+
+    $("back").onclick = function () {
+      show("menu");
+      if (Object.keys(seen).length >= 4) $("fin").classList.add("on");
+    };
+
+
+    /* =====================================================================
+       SURPRISE 1: FOTO
+       ===================================================================== */
+
+    var box = $("pols");
+
+    PHOTOS.forEach(function (p) {
+      var d = document.createElement("div");
+      d.className = "pol";
+
+      var f = document.createElement("div");
+      f.className = "ph";
+
+      var inn = document.createElement("div");
+      inn.className = "in";
+      inn.style.border = "0";
+      inn.style.padding = "0";
+
+      var im = new Image();
+      im.src = p.src;
+      im.alt = "Mono";
+      inn.appendChild(im);
+
+      f.appendChild(inn);
+
+      var t = document.createElement("p");
+      t.textContent = p.cap;
+
+      d.appendChild(f);
+      d.appendChild(t);
+      box.appendChild(d);
+    });
+
+
+    /* =====================================================================
+       SURPRISE 2: SURAT
+       ===================================================================== */
+
+    $("env").onclick = function () {
+      $("env").style.display = "none";
+      $("envh").style.display = "none";
+      $("letter").classList.add("on");
+      $("v2").style.justifyContent = "flex-start";
+
+      document.querySelectorAll("#letter p").forEach(function (e, i) {
+        e.style.animation = "rise 1.4s both";
+        e.style.animationDelay = i * 1.1 + "s";
+      });
+    };
+
+
+    /* =====================================================================
+       SURPRISE 3: MAKE A WISH
+       ===================================================================== */
+
+    $("blow").onclick = function () {
+      var r = $("cake").getBoundingClientRect();
+      $("cake").classList.add("out");
+      $("blow").style.display = "none";
+
+      setTimeout(function () {
+        burst(r.left + r.width / 2, r.top);
+        burst(r.left + r.width / 2, r.top);
+        $("wishd").style.display = "block";
+      }, 650);
+    };
+
+
+    /* =====================================================================
+       SURPRISE 4: HADIAH
+       ===================================================================== */
+
+    $("gift").onclick = function () {
+      var g = $("gift");
+      if (g.classList.contains("open")) return;
+
+      g.classList.add("open");
+      $("gh").style.display = "none";
+
+      var r = g.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + 30);
+
+      setTimeout(function () {
+        $("wbox").classList.add("on");
+      }, 800);
+    };
+
+    $("ws").onclick = function () {
+      var v = $("wt").value.trim();
+
+      if (!v) {
+        $("wn").textContent = "Write something first.";
+        return;
+      }
+
+      var u = "https://wa.me/082144832453" + WA + "?text=" + encodeURIComponent("i want this for my birthday gift : " + v);
+      if (!window.open(u, "_blank")) location.href = u;
+
+      $("wd").style.display = "block";
+
+      var r = $("ws").getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top);
+    };
+
+  })();
+  </script>
+</body>
+</html>
